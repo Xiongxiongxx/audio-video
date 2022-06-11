@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: rgba(255, 255, 255, 0);
+        }
+
+        body {
+            background: #000;
+        }
+
+        .video-js .vjs-big-play-button {
+            width: 4.5rem;
+            height: 4.5rem;
+            border-radius: 50%;
+            left: 50%;
+            top: 50%;
+            margin-left: -2.25rem;
+            margin-top: -2.25rem;
+            background: url('./imgs/play.png') center center no-repeat;
+            background-size: contain;
+            position: absolute;
+            background-size: contain;
+            border: none;
+            background-color: transparent;
+            display: block;
+
+        }
+
+        .video-js .vjs-big-play-button .vjs-icon-placeholder:before,
+        .video-js .vjs-play-control .vjs-icon-placeholder:before,
+        .vjs-icon-play:before {
+            content: '';
+        }
+
+        .video-js .vjs-tech {
+            position: relative !important;
+        }
+
+        .video-js .vjs-time-control {
+            display: block;
+        }
+        .vjs-control-text{
+            display: none;
+        }
+
+        .progress-control {
+            padding: 1.75rem 4rem;
+            position: relative;
+        }
+
+        .progress-bar-bg {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.20);
+            position: relative;
+            height: 0.1875rem;
+            cursor: pointer;
+            border-radius: 0.1875rem;
+            z-index: 10;
+        }
+
+        .progress-bar {
+            background-color: #fff;
+            width: 0;
+            height: 0.1875rem;
+            border-radius: 0.1875rem;
+        }
+
+        .progressDot {
+            content: " ";
+            width: 1.5rem;
+            height: 1.5rem;
+            border-radius: 50%;
+            -moz-border-radius: 50%;
+            -webkit-border-radius: 50%;
+            position: absolute;
+            left: 0;
+            top: 50%;
+            margin-top: -0.75rem;
+            margin-left: -0.75rem;
+            cursor: pointer;
+            /* text-align: center; */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .progressDot-inner {
+            width: 0.75rem;
+            height: 0.75rem;
+            border-radius: 50%;
+            -moz-border-radius: 50%;
+            -webkit-border-radius: 50%;
+            background-color: #fff;
+        }
+
+        .video-time {
+            font-size: 0.875rem;
+            color: #fff;
+            position: absolute;
+            left: 0;
+            width: 100%;
+            top: 1.375rem;
+            padding: 0 1rem;
+            box-sizing: border-box;
+        }
+
+        .video-length-total {
+            float: right;
+            font-size: 0.75rem;
+        }
+
+        .video-length-current {
+            float: left;
+            font-size: 0.75rem;
+        }
+
+        .video-control {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            left: 0;
+            top: 0;
+            z-index: 10;
+        }
+
+        .video-box {
+            width: 100%;
+            margin: 0 auto;
+            height: calc(100vh - 3.875rem);
+            position: relative;
+            border-radius: 0.625rem;
+            overflow: hidden;
+        }
+
+        .right-icons {
+            position: absolute;
+            top: 54%;
+            right: 1rem;
+            z-index: 10;
+        }
+
+        .icon-column {
+            text-align: center;
+            margin-bottom: 1.375rem;
+            display: none;
+        }
+
+        .icon-column-text {
+            font-size: 0.875rem;
+            color: #fff;
+        }
+
+        .icon-img {
+            width: 2.5rem;
+            height: 2.5rem;
+            float: left;
+        }
+
+        .forward-pos {
+            top: 68%;
+        }
+
+        .consult-pos {
+            top: 82%;
+            display: block;
+        }
+
+        .desc {
+            width: 76%;
+            position: absolute;
+            left: 1.3rem;
+            bottom: 4.5rem;
+            color: #fff;
+            z-index: 10;
+        }
+
+        .desc-title {
+            font-size: 1rem;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            font-weight: bold;
+        }
+
+        .desc-logo {
+            width: 1.1875rem;
+            margin-right: 0.4375rem;
+        }
+
+        .desc-text {
+            font-size: 0.875rem;
+            display: -webkit-box;
+            overflow: hidden;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="video-box">
+        <div id="video-control" class="video-control">
+        </div>
+        <div class="right-icons">
+            <!--点赞-->
+            <div id="like" class="icon-column">
+                <img class="icon-img" src="" class="" alt="">
+                <p class="icon-column-text">123</p>
+            </div>
+            <!--转发-->
+            <div id="forward" class="icon-column forward-pos">
+                <img class="icon-img" src="./imgs/forward.png" class="" alt="">
+                <p class="icon-column-text">123</p>
+            </div>
+        </div>
+        <!-- 视频 -->
+        <video style="width: 100%; height: 100%;" id="video" class="video-js vjs-default-skin" playsinline="true" webkit-playsinline="true">
+            <source id="source" src="./sources/videoCfpl.mp4">
+        </video>
+    </div>
+    <!-- 进度条 -->
+    <div class="progress-control">
+        <div class="progress-bar-bg" id="progressBarBg">
+            <div class="progressDot" id="progressDot">
+                <div class="progressDot-inner"></div>
+            </div>
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+
+        <div class="video-time"><span class="video-length-current" id="videoCurTime">00:00</span><span class="video-length-total" id="duration">00:00</span></div>
+    </div>
+    <!-- 介绍 -->
+    <div class="desc">
+        <div class="desc-title">
+            <p>标题</p>
+        </div>
+        <div class="desc-text">
+            简介
+        </div>
+    </div>
+
+    <script src="./js/jquery.min.js"></script>
+    <script src="./js/video.min.js"></script>
+    <script src="./js/common.js"></script>
+    <script>
+        // 初始化video
+        var player = videojs('video', {
+            controls: false,
+            loop: true,
+        });
+        let touch = false
+        let endFlag = false
+        let playFlag = false // 判断播放还是暂停
+        var fixDuration = 0 // 总时长
+
+        // // 全屏时打开自带的控制条
+        // player.on('fullscreenchange', function (e) {
+        //     if (player.isFullscreen()) {
+        //         player.controls(true);
+        //         $('.video-full').hide()
+        //     } else {
+        //         player.controls(false);
+        //         $('.video-full').show()
+        //     }
+        // });
+        // // 点击自定义全屏按钮
+        // $('.video-full').click(function () {
+        //     player.requestFullscreen()
+        // })
+        // 视频的元数据已加载
+        player.on('loadedmetadata', function () {
+            console.log('duration', player.duration())
+            // if (!player.duration() || player.duration() != player.duration()) {
+            //     fixDuration = 470.167
+            // } else {
+            //     fixDuration = player.duration()
+            // }
+            fixDuration = player.duration()
+            $('#duration').text(transTime(fixDuration))
+            var box = document.querySelector('#progressBarBg');
+            box.addEventListener('touchstart', function (e) {
+                console.log('start');
+                e.preventDefault();
+                touch = true
+            })
+            box.addEventListener('touchmove', function (e) {
+                console.log('move');
+                e.preventDefault();
+                touch = true
+                getRange(e)
+            })
+            box.addEventListener('touchend', function (e) {
+                console.log('end');
+                e.preventDefault();
+                getvideo(e)
+            })
+            box.onclick = function (e) {
+                console.log('click');
+                e.preventDefault();
+                touch = true
+                getvideo(e, 'click')
+            }
+        });
+
+        // 暂停
+        player.on('pause', function () {
+            videojs.log('暂停');
+            playFlag = false
+            $('.vjs-big-play-button').show()
+            $('.video-pause').hide()
+        });
+        // 播放
+        player.on('play', function () {
+            videojs.log('播放');
+            playFlag = true
+            $('.vjs-big-play-button').hide()
+        });
+        // 视频播放位置发生改变
+        player.on('timeupdate', function () {
+            // videojs.log('进度');
+            if (!touch && !endFlag) {
+                updateProgress(player);
+            }
+        });
+        // 播放中改变进度条和时间
+        function updateProgress (player) {
+            var value = player.currentTime() / fixDuration * 100;
+            $('#progressDot').css('left', value + '%')
+            $('#progressBar').css('width', value + '%')
+            $('#videoCurTime').text(transTime(player.currentTime()));
+        }
+        $('#video-control').on('click', function () {
+            if (playFlag) {
+                player.pause()
+            } else {
+                player.play()
+            }
+        })
+        function getRange (e) {
+            // 进度条总长度
+            let totalWidth = $('#progressBarBg').css('width').replace('px', '')
+            // 移动的距离和进度条总长度的百分比
+            let leftX = e.touches ? e.touches[0].clientX : e.clientX
+            leftX = leftX - $('#progressBarBg').position().left
+            let durationPer = leftX / totalWidth * 100
+            // 不能拖动超过进度条长度
+            if (durationPer <= 0) {
+                durationPer = 0
+            }
+            if (durationPer >= 100) {
+                durationPer = 100
+            }
+            $('#progressDot').css('left', durationPer + '%')
+            $('#progressBar').css('width', durationPer + '%')
+
+            let num1 = totalWidth * (durationPer / 100) // 进度条走了多少
+            let num2 = totalWidth / fixDuration // 每秒进度条走多少
+            $('#videoCurTime').text(transTime(num1 / num2));
+        }
+        function getvideo (e, event) {
+            // 进度条总长度
+            let totalWidth = $('#progressBarBg').css('width').replace('px', '')
+            let leftX = 0
+            if (event == 'click') {
+                leftX = e.touches ? e.touches[0].clientX : e.clientX
+                leftX = leftX - $('#progressBarBg').position().left
+            } else {
+                leftX = e.changedTouches[0].clientX - $('#progressBarBg').position().left
+            }
+            let durationPer = leftX / totalWidth * 100
+            if (durationPer <= 0) {
+                durationPer = 0
+            }
+            if (durationPer >= 100) {
+                durationPer = 100
+            }
+            $('#progressDot').css('left', durationPer + '%')
+            $('#progressBar').css('width', durationPer + '%')
+            let num1 = totalWidth * (durationPer / 100) // 进度条走了多少
+            let num2 = totalWidth / fixDuration // 每秒进度条走多少
+            player.currentTime(num1 / num2)
+            $('#videoCurTime').text(transTime(num1 / num2));
+            setTimeout(function () {
+                touch = false
+            }, 1000)
+
+        }
+    </script>
+</body>
+
+</html>
